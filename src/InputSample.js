@@ -1,22 +1,44 @@
 import React, {useState} from 'react';
 
-function InputSample(){
-    const [text, setText] = useState('');
-    
+function InputSample(){    
+    const [inputs, setInputs] = useState({
+        name: '',
+        nickname: '',
+    });
+    const {name, nickname} = inputs; // name 값 = "name" or "nickname"
+
     const onChange = (e) => {
-        setText(e.target.value); // 이벤트가 발생한 DOM
+        const {name, value} = e.target;
+        setInputs({
+            ...inputs, // 기존 객체 복사
+            [name]: value, // 덮어쓰기 -> 불변성 -> 객체상태 변경
+        });
     };
     const onReset = () => {
-        setText('');
+        setInputs({
+            name: '',
+            nickname: '',
+        });
     };
 
     return (
         <div>
-            <input onChange={onChange} value={text} /> {/*상자안의 text 관리 -> 초기화 버튼 구현 시 상자 안의 내용도*/}
+            <input 
+                name="name" 
+                placeholder="이름" 
+                onChange={onChange} 
+                value={name} 
+            /> 
+            <input 
+                name="nickname" 
+                placeholder="닉네임" 
+                onChange={onChange}
+                value={nickname} 
+            /> 
             <button onClick={onReset}>초기화</button>
             <div>
                 <b>값: </b>
-                {text}
+                {name} ({nickname})
             </div>
         </div>
     );
