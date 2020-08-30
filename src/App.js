@@ -20,21 +20,25 @@ function App() {
     {
         id: 1,
         username: 'test1',
-        email: 'test1@gmail.com'
+        email: 'test1@gmail.com',
+        active: true,
     },
     {
         id: 2,
         username: 'test2',
-        email: 'test2@gmail.com'
+        email: 'test2@gmail.com',
+        active: false,
     },
     {
         id: 3,
         username: 'test3',
-        email: 'test3@gmail.com'
+        email: 'test3@gmail.com',
+        active: false,
     },
   ]);
 
   const nextId = useRef(4); // id가 바뀌어도 컴포넌트가 리렌더링 될 필요는 없음 -> useState x, useRef
+  
   const onCreate = () => {
     const user = {
       id: nextId.current,
@@ -48,10 +52,16 @@ function App() {
     })
     nextId.current += 1; // 컴포넌트가 리렌더링 되더라도 바뀐 값이 유지
   }
+  
   const onRemove = id => {
-    setUsers(users.filter(user => // 조건을 만족하는 값들로만 user 업데이트
+    setUsers(users.filter(user => // 조건을 만족하는 값들만 통과 -> user 업데이트
       user.id !== id));
   };
+
+  const onToggle = id => {
+    setUsers(users.map(user =>  // 조건을 만족하는 값들만 업데이트
+      user.id === id ? {...user, active: !user.active} : user)); // 기존의 값 + 덮어쓰기 -> 특정 객체 업데이트
+  }
 
   return (
     <>
@@ -61,7 +71,7 @@ function App() {
         onChange={onChange}
         onCreate={onCreate}  
       />
-      <UserList users={users} onRemove={onRemove} />
+      <UserList users={users} onRemove={onRemove} onToggle={onToggle} />
     </> 
   );
 }
