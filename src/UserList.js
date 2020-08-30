@@ -1,19 +1,27 @@
 import React from 'react';
 
-function User({user}){
+function User({ user, onRemove }){
+    const { username, email, id} = user;
     return (
         <div>
-            <b>{user.username}</b> <span>({user.email})</span>
+            <b>{username}</b> <span>({email})</span>
+            {/* () =>을 해서 인자로 받은 함수를 호출하는 모양x */}
+            <button onClick={() => onRemove(id)}>삭제</button>
         </div>
     );
 }
 
-function UserList({users}){
+function UserList({ users, onRemove }){
     return (
         <div>
             {
                 users.map(
-                    user => (<User user={user} key={user.id} />) // index값 말고 별도의 key값으로
+                    user => (
+                        <User 
+                            user={user} 
+                            key={user.id} 
+                            onRemove={onRemove}
+                        />) 
                 )
             }
         </div>
