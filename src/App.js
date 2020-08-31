@@ -1,4 +1,4 @@
-import React , { useRef, useState, useMemo } from 'react';
+import React , { useRef, useState, useMemo, useCallback } from 'react';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
 
@@ -13,13 +13,13 @@ function App() {
     email: '',
   });
   const { username, email } = inputs;
-  const onChange = e => {
+  const onChange = useCallback(e => {
     const { name, value } = e.target;
     setInputs({
       ...inputs,
       [name]: value
     });
-  };
+  }, [inputs]); // inputs가 바뀔 때만 함수가 생성(원래는 계속 새로 생성) -> 안 바뀌면 기존의 함수 재사용 -> 최적화
 
   const [users, setUsers] = useState([
     {
@@ -44,29 +44,29 @@ function App() {
 
   const nextId = useRef(4); // id가 바뀌어도 컴포넌트가 리렌더링 될 필요는 없음 -> useState x, useRef
   
-  const onCreate = () => {
+  const onCreate = useCallback(() => {
     const user = {
       id: nextId.current,
       username,
       email,
     };
-    setUsers([...users, user]); // 기존 배열 복사 + 새로운 요소 추가 == user.concat(user)
+    setUsers([...users, user]); 
     setInputs({
       username: '',
       email: ''
     })
-    nextId.current += 1; // 컴포넌트가 리렌더링 되더라도 바뀐 값이 유지
-  }
+    nextId.current += 1; 
+  }, [username, email, users]); // deps에 넣지 않으면 렌더링될때 [] 변수들을 예전값을 참조 
   
-  const onRemove = id => {
+  const onRemove = useCallback(id => {
     setUsers(users.filter(user => // 조건을 만족하는 값들만 통과 -> user 업데이트
       user.id !== id));
-  };
+  }, [users]);
 
-  const onToggle = id => {
+  const onToggle = useCallback(id => {
     setUsers(users.map(user =>  // 조건을 만족하는 값들만 업데이트
       user.id === id ? {...user, active: !user.active} : user)); // 기존의 값 + 덮어쓰기 -> 특정 객체 업데이트
-  }
+  }, [users]);
 
   // users가 바뀔때만 호출 -> 아닐때는 이전의 값을 그대로 사용
   const count = useMemo(() => counterActiveUsers(users), [users]); 
