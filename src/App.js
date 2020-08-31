@@ -1,6 +1,11 @@
-import React , { useRef, useState } from 'react';
+import React , { useRef, useState, useMemo } from 'react';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
+
+function counterActiveUsers(users){
+  console.log('활성 사용자 수 세는중...');
+  return users.filter(user => user.active).length; // 조건 통과 배열 길이 == 조건 만족하는 원소 수
+}
 
 function App() {
   const [inputs, setInputs] = useState({
@@ -63,6 +68,9 @@ function App() {
       user.id === id ? {...user, active: !user.active} : user)); // 기존의 값 + 덮어쓰기 -> 특정 객체 업데이트
   }
 
+  // users가 바뀔때만 호출 -> 아닐때는 이전의 값을 그대로 사용
+  const count = useMemo(() => counterActiveUsers(users), [users]); 
+
   return (
     <>
       <CreateUser 
@@ -72,6 +80,7 @@ function App() {
         onCreate={onCreate}  
       />
       <UserList users={users} onRemove={onRemove} onToggle={onToggle} />
+      <div>활성 사용자 수 : {count}</div>
     </> 
   );
 }
