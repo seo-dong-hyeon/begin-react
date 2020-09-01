@@ -50,23 +50,25 @@ function App() {
       username,
       email,
     };
-    setUsers([...users, user]); 
+    setUsers(users => users.concat(user)); // 최신 parameter 조회 -> []에 값을 안 넣어도 됨 
+                                           // 업데이트 된 컴포넌트만 렌더링      
     setInputs({
       username: '',
       email: ''
     })
     nextId.current += 1; 
-  }, [username, email, users]); // deps에 넣지 않으면 렌더링될때 [] 변수들을 예전값을 참조 
+  }, [username, email]); 
   
+  /* 처음 만들때만, 업데이트 시에만 렌더링 -> 이후에 값이 안 변할 땐 재새용 */
   const onRemove = useCallback(id => {
-    setUsers(users.filter(user => // 조건을 만족하는 값들만 통과 -> user 업데이트
+    setUsers(users => users.filter(user => 
       user.id !== id));
-  }, [users]);
+  }, []);
 
   const onToggle = useCallback(id => {
-    setUsers(users.map(user =>  // 조건을 만족하는 값들만 업데이트
-      user.id === id ? {...user, active: !user.active} : user)); // 기존의 값 + 덮어쓰기 -> 특정 객체 업데이트
-  }, [users]);
+    setUsers(users => users.map(user =>  
+      user.id === id ? {...user, active: !user.active} : user)); 
+  }, []);
 
   // users가 바뀔때만 호출 -> 아닐때는 이전의 값을 그대로 사용
   const count = useMemo(() => counterActiveUsers(users), [users]); 
